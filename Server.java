@@ -1,12 +1,13 @@
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * Server
@@ -169,7 +170,7 @@ public class Server {
     }
 }
 
-class UserHandler extends Thread {
+class UserHandler implements Runnable {
     // The Server that spawned us
     private Server server;
 
@@ -184,68 +185,59 @@ class UserHandler extends Thread {
 
         // announce online users
         this.server.broadcastOnlineUsers();
-
-        // Start up the thread
-        start();
     }
 
     public void run() {
-        try {
-            // Use a DataInputStream for communication; the client
-            // is using a DataOutputStream to write to us
-            DataInputStream din = user.getInputStream();
+        // Create Scanner for communication; the client
+        // is using a PrintStream to write to us
+        Scanner in = new Scanner(this.user.getInputStream());
 
-            // Over and over, forever ...
-            while (true) {
-                // ... read the next message ...
-                String message = din.readUTF();
+        // Until there is nothing left ...
+        while (in.hasNextLine()) {
+            // ... read the next message ...
+            String message = in.nextLine();
 
-                // ... check if nickname change request ...
-                if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
-                    if (message.split(" ").length > 2) {
-                        server.sendToUser("#error# name cannot contain spaces!!", user);
-                        continue;
-                    }
-
-                    String new_nickname = message.replace("#change_my_nickname_to# ", "");
-                    String old_nickname = user.getNickname();
-
-                    if (!new_nickname.equals(cleanMessage(new_nickname, user))) {
-                        server.sendToUser("#error# name cannot contain offensive language!!", user);
-                        continue;
-                    }
-
-                    if (server.updateUserNickname(old_nickname, new_nickname)) {
-                        server.broadcastToAll(
-                                "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
-                        continue;
-                    }
+            // ... check if nickname change request ...
+            if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
+                if (message.split(" ").length > 2) {
+                    server.sendToUser("#error# name cannot contain spaces!!", user);
+                    continue;
                 }
 
-                // ... clean the message ...
-                message = cleanMessage(message, user);
+                String new_nickname = message.replace("#change_my_nickname_to# ", "");
+                String old_nickname = user.getNickname();
 
-                // ... check if user gets banned ...
-                if (user.getBanCounter() > 3) {
-                    server.banUser(user);
+                if (!new_nickname.equals(cleanMessage(new_nickname, user))) {
+                    server.sendToUser("#error# name cannot contain offensive language!!", user);
+                    continue;
                 }
 
-                // ... tell the world ...
-                System.out.println("Sending " + message);
-
-                // ... and have the server send it to all clients
-                server.broadcastToAll(message, user.getNickname());
+                if (server.updateUserNickname(old_nickname, new_nickname)) {
+                    server.broadcastToAll(
+                            "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
+                    continue;
+                }
             }
-        } catch (EOFException e) {
-            // No error message needed
-        } catch (IOException e) {
-            // Error message needed
-            e.printStackTrace();
-        } finally {
-            // The connection is closed for one reason or another,
-            // so have the server dealing with it
-            server.removeConnection(user);
+
+            // ... clean the message ...
+            message = cleanMessage(message, user);
+
+            // ... check if user gets banned ...
+            if (user.getBanCounter() > 3) {
+                server.banUser(user);
+            }
+
+            // ... tell the world ...
+            System.out.println("Sending " + message);
+
+            // ... and have the server send it to all clients
+            server.broadcastToAll(message, user.getNickname());
         }
+
+        // end of Thread
+        server.removeConnection(user);
+        this.server.broadcastOnlineUsers();
+        in.close();
     }
 
     // Clean contents of the message from offensive
@@ -274,14 +266,14 @@ class User {
     private Socket client;
     private String nickname;
     private PrintStream output;
-    private DataInputStream input;
+    private InputStream input;
     private int ban_counter;
 
     public User(Socket client, String nickname) throws IOException {
         this.client = client;
         this.nickname = nickname;
         this.output = new PrintStream(client.getOutputStream());
-        this.input = new DataInputStream(client.getInputStream());
+        this.input = client.getInputStream();
         this.ban_counter = 0;
     }
 
@@ -293,7 +285,7 @@ class User {
         return this.output;
     }
 
-    public DataInputStream getInputStream() {
+    public InputStream getInputStream() {
         return this.input;
     }
 
