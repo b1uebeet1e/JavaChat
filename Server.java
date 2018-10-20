@@ -55,6 +55,8 @@ public class Server {
             // store new user
             clients.put(nickname, newUser);
 
+            // create a new thread for newUser incoming messages handling
+            new Thread(new UserHandler(this, newUser)).start();
         }
 
     }
