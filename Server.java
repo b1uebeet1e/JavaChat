@@ -1,13 +1,14 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Server
@@ -20,9 +21,10 @@ public class Server {
     private HashMap<String, User> clients;
 
     // Constructor
-    public Server() {
+    public Server(int port) throws IOException {
         // Initiate list of clients
         clients = new HashMap<>();
+        listen(port);
     }
 
     private void listen(int port) throws IOException {
@@ -99,7 +101,7 @@ public class Server {
                 user.getSocket().close();
             } catch (IOException e) {
                 System.out.println("Error closing " + user.getSocket());
-                ie.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -122,7 +124,7 @@ public class Server {
 
         // Syncronize to avoid parallel crossing of the clients Hashmap
         synchronized (clients) {
-            if (doesMyNicknameExists(new_nickname)) {
+            if (doesMyNicknameExist(new_nickname)) {
                 success = false;
             } else {
                 // Tell the world
@@ -143,7 +145,8 @@ public class Server {
 
     // Main routine
     // Usage: java Server <port>
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        int port;
         try {
             // Get the port # from the command line
             if (args.length != 1) {
@@ -151,7 +154,7 @@ public class Server {
                 System.out.println("Proper usage: java Server <port>");
                 return;
             }
-            int port = Integer.parseInt(args[0]);
+            port = Integer.parseInt(args[0]);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Improper declaration!");
             System.out.println("Proper usage: java Server <port>");
@@ -164,11 +167,7 @@ public class Server {
 
         // Create a Server object, which will automatically begin
         // accepting connections.
-        try {
-            new Server().listen(port);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        new Server(port);
     }
 }
 
@@ -276,14 +275,14 @@ class UserHandler extends Thread {
 class User {
     private Socket client;
     private String nickname;
-    private OutputStream output;
+    private PrintStream output;
     private InputStream input;
     private int ban_counter;
 
-    public User(Socket client, String nickname) {
+    public User(Socket client, String nickname) throws IOException {
         this.client = client;
         this.nickname = nickname;
-        this.output = client.getOutputStream();
+        this.output = new PrintStream(client.getOutputStream());
         this.input = client.getInputStream();
         this.ban_counter = 0;
     }
@@ -293,11 +292,11 @@ class User {
     }
 
     public PrintStream getOutStream() {
-        return this.input;
+        return this.output;
     }
 
     public InputStream getInputStream() {
-        return this.output;
+        return this.input;
     }
 
     public String getNickname() {
