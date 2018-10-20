@@ -58,6 +58,32 @@ public class Server {
 
     }
 
+    public boolean doesMyNicknameExist(String nickname) {
+        return clients.containsKey(nickname);
+    }
+
+    public boolean updateUserNickname(String old_nickname, String new_nickname) {
+        boolean success;
+        synchronized (clients) {
+            if (doesMyNicknameExists(new_nickname)) {
+                success = false;
+            } else {
+                // Tell the world
+                System.out.println("Renaming '" + old_nickname + "' to '" + new_nickname + "'");
+
+                // Replace User key on HashMap
+                clients.put(new_nickname, clients.remove(old_nickname));
+
+                // Update user Nickname
+                clients.get(new_nickname).changeNickname(new_nickname);
+
+                success = true;
+            }
+        }
+
+        return success;
+    }
+
     // Main routine
     // Usage: java Server <port>
     public static void main(String[] args) {
@@ -119,6 +145,14 @@ class UserHandler extends Thread {
             while (true) {
                 // ... read the next message ...
                 String message = din.readUTF();
+
+                // ... check if nickname change request ...
+                if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
+
+                }
+
+                // ... clean the message ...
+                message = cleanMessage(message);
 
                 // ... tell the world ...
                 System.out.println("Sending " + message);
