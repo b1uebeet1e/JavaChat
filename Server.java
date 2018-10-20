@@ -3,8 +3,6 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -193,9 +191,9 @@ class UserHandler extends Thread {
 
     public void run() {
         try {
-            // Create a DataInputStream for communication; the client
+            // Use a DataInputStream for communication; the client
             // is using a DataOutputStream to write to us
-            DataInputStream din = new DataInputStream(user.getInputStream());
+            DataInputStream din = user.getInputStream();
 
             // Over and over, forever ...
             while (true) {
@@ -276,14 +274,14 @@ class User {
     private Socket client;
     private String nickname;
     private PrintStream output;
-    private InputStream input;
+    private DataInputStream input;
     private int ban_counter;
 
     public User(Socket client, String nickname) throws IOException {
         this.client = client;
         this.nickname = nickname;
         this.output = new PrintStream(client.getOutputStream());
-        this.input = client.getInputStream();
+        this.input = new DataInputStream(client.getInputStream());
         this.ban_counter = 0;
     }
 
@@ -295,7 +293,7 @@ class User {
         return this.output;
     }
 
-    public InputStream getInputStream() {
+    public DataInputStream getInputStream() {
         return this.input;
     }
 
