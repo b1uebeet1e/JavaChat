@@ -202,20 +202,20 @@ class UserHandler implements Runnable {
             // ... check if nickname change request ...
             if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
                 if (message.split(" ").length > 2) {
-                    server.sendToUser("#error# name cannot contain spaces!!", user);
+                    this.server.sendToUser("#error# name cannot contain spaces!!", user);
                     continue;
                 }
 
                 String new_nickname = message.replace("#change_my_nickname_to# ", "");
-                String old_nickname = user.getNickname();
+                String old_nickname = this.user.getNickname();
 
                 if (!new_nickname.equals(cleanMessage(new_nickname, user))) {
-                    server.sendToUser("#error# name cannot contain offensive language!!", user);
+                    this.server.sendToUser("#error# name cannot contain offensive language!!", this.user);
                     continue;
                 }
 
-                if (server.updateUserNickname(old_nickname, new_nickname)) {
-                    server.broadcastToAll(
+                if (this.server.updateUserNickname(old_nickname, new_nickname)) {
+                    this.server.broadcastToAll(
                             "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
                     continue;
                 }
@@ -225,15 +225,15 @@ class UserHandler implements Runnable {
             message = cleanMessage(message, user);
 
             // ... check if user gets banned ...
-            if (user.getBanCounter() > 3) {
-                server.banUser(user);
+            if (this.user.getBanCounter() > 3) {
+                this.server.banUser(user);
             }
 
             // ... tell the world ...
             System.out.println("Sending " + message);
 
             // ... and have the server send it to all clients
-            server.broadcastToAll(message, user.getNickname());
+            this.server.broadcastToAll(message, this.user.getNickname());
         }
 
         // end of Thread
