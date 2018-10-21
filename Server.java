@@ -16,6 +16,9 @@ public class Server {
     // The ServerSocket we'll use for accepting new connections
     private ServerSocket server;
 
+    // The port number our server will be listening
+    private int port;
+
     // HashMap that contains users with their nicknames as keys;
     private HashMap<String, User> clients;
 
@@ -23,10 +26,10 @@ public class Server {
     public Server(int port) throws IOException {
         // Initiate list of clients
         clients = new HashMap<>();
-        listen(port);
+        this.port = port;
     }
 
-    private void listen(int port) throws IOException {
+    private void run() throws IOException {
         // Create the ServerSocket
         server = new ServerSocket(port);
 
@@ -74,14 +77,19 @@ public class Server {
     // Broadcast messages to every User
     public void broadcastToAll(String message) {
         for (User client : this.clients.values()) {
-            client.getOutStream().println("#message# " + message);
+            client.getOutStream().println("#group# " + message);
         }
     }
 
     // Broardcast messages from a User to every User
     public void broadcastToAll(String message, String nickname) {
+        broadcastToAll("@" + nickname + ": " + message);
+    }
+
+    // Broadcast the set of client nicknames all Users
+    public void broadcastOnlineUsers() {
         for (User client : this.clients.values()) {
-            client.getOutStream().println("@" + nickname + ": " + message);
+            client.getOutStream().println(this.clients.keySet());
         }
     }
 
@@ -106,13 +114,6 @@ public class Server {
                 System.out.println("Error closing " + user.getSocket());
                 e.printStackTrace();
             }
-        }
-    }
-
-    // Broadcast the set of client nicknames all Users
-    public void broadcastOnlineUsers() {
-        for (User client : this.clients.values()) {
-            client.getOutStream().println(this.clients.keySet());
         }
     }
 
@@ -170,7 +171,7 @@ public class Server {
 
         // Create a Server object, which will automatically begin
         // accepting connections.
-        new Server(port);
+        new Server(port).run();
     }
 }
 
@@ -206,38 +207,40 @@ class UserHandler implements Runnable {
             // ... check if nickname change request ...
             if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
                 if (message.split(" ").length > 2) {
-                    this.server.sendToUser("#error# name cannot contain spaces!!", user);
-                    continue;
+                    this.server.sendToUser("#error# name cannot contain spaces!!", this.user);
                 }
 
-                String new_nickname = message.replace("#change_my_nickname_to# ", "");
-                String old_nickname = this.user.getNickname();
+                else {
+                    String new_nickname = message.replace("#change_my_nickname_to# ", "");
+                    String old_nickname = this.user.getNickname();
 
-                if (!new_nickname.equals(cleanMessage(new_nickname, this.user))) {
-                    this.server.sendToUser("#error# name cannot contain offensive language!!", this.user);
-                    continue;
-                }
+                    if (!new_nickname.equals(cleanMessage(new_nickname, this.user))) {
+                        this.server.sendToUser("#error# name cannot contain offensive language!!", this.user);
+                    }
 
-                if (this.server.updateUserNickname(old_nickname, new_nickname)) {
-                    this.server.broadcastToAll(
-                            "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
-                    continue;
+                    else if (this.server.updateUserNickname(old_nickname, new_nickname)) {
+                        this.server.broadcastToAll(
+                                "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
+                    }
                 }
             }
 
-            // ... clean the message ...
-            message = cleanMessage(message, this.user);
+            else {
 
-            // ... check if user gets banned ...
-            if (this.user.getBanCounter() > 3) {
-                this.server.banUser(this.user);
+                // ... clean the message ...
+                message = cleanMessage(message, this.user);
+
+                // ... check if user gets banned ...
+                if (this.user.getBanCounter() > 3) {
+                    this.server.banUser(this.user);
+                }
+
+                // ... tell the world ...
+                System.out.println("Sending " + message);
+
+                // ... and have the server send it to all clients
+                this.server.broadcastToAll(message, this.user.getNickname());
             }
-
-            // ... tell the world ...
-            System.out.println("Sending " + message);
-
-            // ... and have the server send it to all clients
-            this.server.broadcastToAll(message, this.user.getNickname());
         }
 
         // end of Thread
