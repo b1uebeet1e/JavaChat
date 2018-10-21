@@ -80,7 +80,9 @@ public class Server {
 
     // Broardcast messages from a User to every User
     public void broadcastToAll(String message, String nickname) {
-        broadcastToAll("@" + nickname + ": " + message);
+        for (User client : this.clients.values()) {
+            client.getOutStream().println("@" + nickname + ": " + message);
+        }
     }
 
     // Remove a socket, and it's corresponding User and nickname
@@ -190,6 +192,8 @@ class UserHandler implements Runnable {
     }
 
     public void run() {
+        String message;
+
         // Create Scanner for communication; the client
         // is using a PrintStream to write to us
         Scanner in = new Scanner(this.user.getInputStream());
@@ -197,7 +201,7 @@ class UserHandler implements Runnable {
         // Until there is nothing left ...
         while (in.hasNextLine()) {
             // ... read the next message ...
-            String message = in.nextLine();
+            message = in.nextLine();
 
             // ... check if nickname change request ...
             if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
@@ -209,7 +213,7 @@ class UserHandler implements Runnable {
                 String new_nickname = message.replace("#change_my_nickname_to# ", "");
                 String old_nickname = this.user.getNickname();
 
-                if (!new_nickname.equals(cleanMessage(new_nickname, user))) {
+                if (!new_nickname.equals(cleanMessage(new_nickname, this.user))) {
                     this.server.sendToUser("#error# name cannot contain offensive language!!", this.user);
                     continue;
                 }
@@ -222,11 +226,11 @@ class UserHandler implements Runnable {
             }
 
             // ... clean the message ...
-            message = cleanMessage(message, user);
+            message = cleanMessage(message, this.user);
 
             // ... check if user gets banned ...
             if (this.user.getBanCounter() > 3) {
-                this.server.banUser(user);
+                this.server.banUser(this.user);
             }
 
             // ... tell the world ...
@@ -237,7 +241,7 @@ class UserHandler implements Runnable {
         }
 
         // end of Thread
-        server.removeConnection(user);
+        this.server.removeConnection(user);
         this.server.broadcastOnlineUsers();
         in.close();
     }
