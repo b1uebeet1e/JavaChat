@@ -30,7 +30,7 @@ public class Client {
 
         System.out.println("Chat intiated:");
 
-        new Thread(new MessageHandler(client.getInputStream()).start());
+        new Thread(new MessageHandler(client.getInputStream())).start();
 
         Scanner in = new Scanner(System.in);
 
@@ -45,7 +45,7 @@ public class Client {
 
     // Main routine
     // Usage: java Client <host> <port>
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException, IOException {
         String host;
         int port;
         try {
