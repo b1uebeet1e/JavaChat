@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -66,7 +67,8 @@ public class Server {
 
     // Ban a specific user for a period of time
     public void banUser(User client) {
-
+        // TODO: change this to actual ban...
+        sendToUser("please be more polite or you 'll get banned...", client);
     }
 
     // Sent a message to a specific User
@@ -101,8 +103,8 @@ public class Server {
         // while it walks down the HashMap of all the clients
         synchronized (clients) {
             // Tell the world
-            System.out.println("Removing connection to " + user.getSocket());
-            System.out.println("With nickname '" + user.getNickname() + "'");
+            System.out.print("Removing connection to " + user.getSocket());
+            System.out.println(" with nickname '" + user.getNickname() + "'");
 
             // Remove user from HashMap
             clients.remove(user.getNickname());
@@ -236,7 +238,7 @@ class UserHandler implements Runnable {
                 }
 
                 // ... tell the world ...
-                System.out.println("Sending " + message);
+                System.out.println("User '" + this.user.getNickname() + "' sent: " + message);
 
                 // ... and have the server send it to all clients
                 this.server.broadcastToAll(message, this.user.getNickname());
@@ -255,10 +257,10 @@ class UserHandler implements Runnable {
         try (BufferedReader in = new BufferedReader(new FileReader("banned_words.txt"))) {
             String str;
             while ((str = in.readLine()) != null) {
-                if (message.contains(str)) {
+                if (message.matches("(?i)\\b" + str + "\\b(?i)")) {
                     trigger = true;
                 }
-                message = message.replace(str, "<family friendly content>");
+                message = message.replaceAll(("(?i)\\b" + str + "\\b(?i)"), "<family friendly content>");
             }
 
             if (trigger) {
