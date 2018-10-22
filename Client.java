@@ -43,8 +43,33 @@ public class Client {
         client.close();
     }
 
+    // Main routine
+    // Usage: java Client <host> <port>
     public static void main(String[] args) {
+        String host;
+        int port;
+        try {
+            // Get the port # from the command line
+            if (args.length != 2) {
+                System.out.println("Improper declaration!");
+                System.out.println("Proper usage: java Client <host> <port>");
+                return;
+            }
 
+            host = args[0];
+            port = Integer.parseInt(args[1]);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Improper declaration!");
+            System.out.println("Proper usage: java Client <host> <port>");
+            return;
+        } catch (NumberFormatException e) {
+            System.out.println("Improper declaration!");
+            System.out.println("Proper usage: java Client <host> <port>");
+            return;
+        }
+
+        new Client(host, port).run();
     }
 }
 
