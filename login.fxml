@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FXMLDocumentController">
+   <children>
+      <Label alignment="CENTER" layoutX="105.0" layoutY="14.0" text="Enter Credentials" textAlignment="CENTER">
+         <font>
+            <Font name="Roboto Medium" size="25.0" />
+         </font>
+      </Label>
+      <Button fx:id="login" layoutX="19.0" layoutY="240.0" mnemonicParsing="false" onAction="#actionHandler" prefHeight="34.0" prefWidth="364.0" text="Login" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="17.0">
+         <font>
+            <Font name="Roboto Regular" size="22.0" />
+         </font>
+      </Button>
+      <TextField fx:id="username" layoutX="18.0" layoutY="90.0" promptText="username" AnchorPane.leftAnchor="18.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </TextField>
+      <PasswordField fx:id="password" layoutX="214.0" layoutY="90.0" promptText="password" AnchorPane.rightAnchor="18.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </PasswordField>
+      <TextField fx:id="address" layoutX="19.0" layoutY="164.0" promptText="address" text="snf-844129.vm.okeanos.grnet.gr" AnchorPane.leftAnchor="18.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="port" layoutX="215.0" layoutY="164.0" promptText="port" text="51234" AnchorPane.rightAnchor="18.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </TextField>
+      <Label layoutX="267.0" layoutY="63.0" text="Password" AnchorPane.rightAnchor="70.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="284.0" layoutY="140.0" text="Port" AnchorPane.rightAnchor="89.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="72.0" layoutY="63.0" text="Username" AnchorPane.leftAnchor="72.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="78.0" layoutY="140.0" text="Address" AnchorPane.leftAnchor="78.0">
+         <font>
+            <Font name="Roboto Regular" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="error" alignment="CENTER" layoutX="182.0" layoutY="213.0" textFill="RED" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="182.0" AnchorPane.rightAnchor="183.0">
+         <font>
+            <Font name="Roboto Regular" size="13.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

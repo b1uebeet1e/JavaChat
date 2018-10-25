@@ -59,6 +59,9 @@ public class Server {
             // store new user
             clients.put(nickname, newUser);
 
+            // inform new user about his nickname
+            sendToUser("#nickname# " + nickname, newUser);
+
             // create a new thread for newUser incoming messages handling
             new Thread(new UserHandler(this, newUser)).start();
         }
@@ -68,7 +71,7 @@ public class Server {
     // Ban a specific user for a period of time
     public void banUser(User client) {
         // TODO: change this to actual ban...
-        sendToUser("please be more polite or you 'll get banned...", client);
+        sendToUser("#notify# please be more polite or you 'll get banned...", client);
     }
 
     // Sent a message to a specific User
@@ -224,6 +227,17 @@ class UserHandler implements Runnable {
                         this.server.broadcastToAll(
                                 "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
                     }
+                }
+            }
+
+            else if (message.split(" ")[0].equals("#terminate_connection#")) {
+                if (message.split(" ").length > 1) {
+                    System.out.println(this.user.getSocket() + " with nickname " + this.user.getNickname()
+                            + "sent unexpected request!!");
+                }
+
+                else {
+                    break;
                 }
             }
 
