@@ -94,7 +94,12 @@ public class Server {
     // Broadcast the set of client nicknames all Users
     public void broadcastOnlineUsers() {
         for (User client : this.clients.values()) {
-            client.getOutStream().println(this.clients.keySet());
+            String message = "#online_users#";
+            for (String nickname : this.clients.keySet()) {
+                message += " ";
+                message += nickname;
+            }
+            client.getOutStream().println(message);
         }
     }
 
@@ -224,6 +229,8 @@ class UserHandler implements Runnable {
                     }
 
                     else if (this.server.updateUserNickname(old_nickname, new_nickname)) {
+                        this.server.sendToUser("#nickname# " + new_nickname, this.user);
+                        this.server.broadcastOnlineUsers();
                         this.server.broadcastToAll(
                                 "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
                     }

@@ -8,29 +8,29 @@ import java.util.Scanner;
 /**
  * Client
  */
-public class Client {
+public class ClientCLI {
 
-    private Socket client;
+    private Socket server;
 
     private String host;
 
     private int port;
 
-    public Client(String host, int port) {
+    public ClientCLI(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
     public void run() throws UnknownHostException, IOException {
 
-        client = new Socket(host, port);
+        server = new Socket(host, port);
         System.out.println("Successful connection to server!");
 
-        PrintStream output = new PrintStream(client.getOutputStream());
+        PrintStream output = new PrintStream(server.getOutputStream());
 
         System.out.println("Chat intiated:");
 
-        new Thread(new MessageHandler(client.getInputStream())).start();
+        new Thread(new MessageHandler(server.getInputStream())).start();
 
         Scanner in = new Scanner(System.in);
 
@@ -40,7 +40,7 @@ public class Client {
 
         output.close();
         in.close();
-        client.close();
+        server.close();
     }
 
     // Main routine
@@ -69,7 +69,7 @@ public class Client {
             return;
         }
 
-        new Client(host, port).run();
+        new ClientCLI(host, port).run();
     }
 }
 
