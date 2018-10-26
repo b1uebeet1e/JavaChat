@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 /**
  * FXMLDocumentController
  */
-public class FXMLDocumentController implements Initializable {
+public class Controller implements Initializable {
 
     @FXML
     private TextField username, address, port;
