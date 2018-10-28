@@ -10,7 +10,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FXMLDocumentController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientController">
    <children>
       <ScrollPane fx:id="messages" layoutX="14.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="162.0" AnchorPane.topAnchor="14.0">
          <content>
@@ -29,7 +29,7 @@
             </VBox>
          </content>
       </ScrollPane>
-      <TextArea fx:id="message" layoutX="14.0" layoutY="323.0" onKeyReleased="#keyHandler" prefHeight="64.0" promptText="Type a message..." wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="162.0">
+      <TextArea fx:id="message" layoutX="14.0" layoutY="323.0" onKeyPressed="#keyPressedHandler" onKeyReleased="#keyReleasedHandler" prefHeight="64.0" promptText="Type a message..." wrapText="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="162.0">
          <font>
             <Font name="Roboto Regular" size="14.0" />
          </font></TextArea>
@@ -37,7 +37,7 @@
          <font>
             <Font name="Roboto Regular" size="30.0" />
          </font></Button>
-      <Button fx:id="nickname" layoutX="452.0" layoutY="283.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="134.0" style="-fx-background-color: linear-gradient(#00d9ff, #499bea);" text="change nickname" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="92.0" AnchorPane.rightAnchor="14.0">
+      <Button fx:id="nickname" layoutX="452.0" layoutY="283.0" mnemonicParsing="false" onAction="#actionHandler" prefHeight="25.0" prefWidth="134.0" style="-fx-background-color: linear-gradient(#00d9ff, #499bea);" text="change nickname" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="92.0" AnchorPane.rightAnchor="14.0">
          <font>
             <Font name="Roboto Regular" size="14.0" />
          </font></Button>
