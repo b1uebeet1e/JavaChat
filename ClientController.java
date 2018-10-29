@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -9,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -45,7 +47,7 @@ public class ClientController implements Initializable {
     public void actionHandler(ActionEvent event) {
         if (event.getSource() == send) {
             try {
-                connection.sendMessage(new String(message.getText().trim()));
+                connection.sendMessage(message.getText().trim());
             } catch (IOException e) {
                 messageBox.getChildren().add(errorMessage("ERROR"));
             }
@@ -53,11 +55,28 @@ public class ClientController implements Initializable {
         }
 
         else if (event.getSource() == nickname) {
-
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Change Nickname");
+            dialog.setHeaderText("Change Nickname");
+            dialog.setContentText("Enter your new nickname:");
+            Optional<String> result = dialog.showAndWait();
+            try {
+                if (result.isPresent()){
+                    connection.sendMessage("#change_my_nickname_to# " + result.get());
+                }
+            } catch (IOException e) {
+                messageBox.getChildren().add(errorMessage("ERROR"));
+            }
         }
 
         else if (event.getSource() == disconnect) {
-
+            try {
+                connection.sendMessage("#terminate_connection#");
+                connection.close();
+                controller.setLoginStage();
+            } catch (IOException e) {
+                messageBox.getChildren().add(errorMessage("ERROR"));
+            }
         }
     }
 
@@ -79,7 +98,7 @@ public class ClientController implements Initializable {
         try {
             connection.sendMessage(message.getText().trim());
         } catch (IOException e) {
-            messageBox.getChildren().add(errorMessage("ERROR"));
+            messageBox.getChildren().add(errorMessage("ERROR: " + e.getMessage()));
         }
         message.setText("");
     }
@@ -114,8 +133,8 @@ public class ClientController implements Initializable {
                     try {
                         msg = connection.getInput().readLine();
                     } catch (Exception e) {
-                        System.err.println(e);
-                        break;
+                        System.err.println(e);  
+						break;
                     }
                     if (msg.isEmpty()) {
                         continue;

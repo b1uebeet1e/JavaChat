@@ -60,4 +60,8 @@ public class LoginController implements Initializable {
     public void setContoller(ClientGUI controller) {
         this.controller = controller;
     }
+
+	public void setError(String str) {
+		error.setText(str);
+	}
 }

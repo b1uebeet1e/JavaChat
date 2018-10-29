@@ -216,16 +216,16 @@ class UserHandler implements Runnable {
 
             // ... check if nickname change request ...
             if (message.split(" ")[0].equals("#change_my_nickname_to#")) {
-                if (message.split(" ").length > 2) {
-                    this.server.sendToUser("#error# name cannot contain spaces!!", this.user);
+                if (message.split(" ").length != 2) {
+                    this.server.sendToUser("#notify# name cannot contain spaces!!", this.user);
                 }
 
                 else {
-                    String new_nickname = message.replace("#change_my_nickname_to# ", "");
+                    String new_nickname = message.split(" ")[1];
                     String old_nickname = this.user.getNickname();
 
                     if (!new_nickname.equals(cleanMessage(new_nickname, this.user))) {
-                        this.server.sendToUser("#error# name cannot contain offensive language!!", this.user);
+                        this.server.sendToUser("#notify# name cannot contain offensive language!!", this.user);
                     }
 
                     else if (this.server.updateUserNickname(old_nickname, new_nickname)) {
