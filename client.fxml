@@ -12,7 +12,7 @@
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientController">
    <children>
-      <ScrollPane fx:id="messages" layoutX="14.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="162.0" AnchorPane.topAnchor="14.0">
+      <ScrollPane fx:id="messages" layoutX="14.0" layoutY="14.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vvalue="1.0" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="162.0" AnchorPane.topAnchor="14.0">
          <content>
             <VBox fx:id="messageBox" fillWidth="false">
                <padding>
@@ -20,7 +20,7 @@
                </padding>
             </VBox>
          </content></ScrollPane>
-      <ScrollPane fx:id="users" layoutX="452.0" layoutY="14.0" prefWidth="134.0" AnchorPane.bottomAnchor="172.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+      <ScrollPane fx:id="users" layoutX="452.0" layoutY="14.0" prefWidth="134.0" vvalue="1.0" AnchorPane.bottomAnchor="172.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <content>
             <VBox fx:id="userBox" fillWidth="false">
                <padding>
