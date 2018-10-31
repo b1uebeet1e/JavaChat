@@ -205,19 +205,20 @@ public class ClientController implements Initializable {
         return text;
     }
 
-    public void showUsers(String users) {
+    public void showUsers(String on_users) {
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
                 userBox.getChildren().clear();
-                for (String str : users.split(" ")) {
+                for (String str : on_users.split(" ")) {
                     if (str.equals(my_nickname)) {
                         str = str + "(me)";
                         userBox.getChildren().add(myUserText(str));
                         continue;
                     }
                     userBox.getChildren().add(userText(str));
+					users.setVvalue(1.0); 
                 }
             }
         });
@@ -229,6 +230,7 @@ public class ClientController implements Initializable {
             @Override
             public void run() {
                 messageBox.getChildren().add(errorMessage(str.trim()));
+				messages.setVvalue(1.0); 
             }
         });
     }
@@ -239,6 +241,7 @@ public class ClientController implements Initializable {
             @Override
             public void run() {
                 messageBox.getChildren().add(textMessage(str.trim()));
+				messages.setVvalue(1.0);
             }
         });
     }
