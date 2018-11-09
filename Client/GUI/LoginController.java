@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -32,11 +34,22 @@ public class LoginController implements Initializable {
     private Button login;
 
     @FXML
+    private ComboBox<String> choice;
+
+    @FXML
+    private CheckBox anon;
+
+    @FXML
     private void login() {
-        int port_num;
+        error.setText("connecting...");
+
         try {
-            port_num = Integer.parseInt(port.getText());
-            connection = new ConnectionController(address.getText(), port_num);
+            int port_num = Integer.parseInt(port.getText());
+            int arg = choice.getSelectionModel().getSelectedIndex();
+            if (anon.selectedProperty().get()) {
+                arg += 2;
+            }
+            connection = new ConnectionController(address.getText(), port_num, arg);
             controller.setClientStage(connection);
         } catch (NumberFormatException | NullPointerException e) {
             error.setText("Invalid port number!!");
@@ -55,13 +68,15 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        choice.getItems().addAll("Public Unsecure Channel, PUC", "Public Secure Channel, PSC");
+        choice.getSelectionModel().selectFirst();
     }
 
     public void setContoller(ClientGUI controller) {
         this.controller = controller;
     }
 
-	public void setError(String str) {
-		error.setText(str);
-	}
+    public void setError(String str) {
+        error.setText(str);
+    }
 }

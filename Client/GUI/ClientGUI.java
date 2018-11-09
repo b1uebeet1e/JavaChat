@@ -39,10 +39,10 @@ public class ClientGUI extends Application {
 
         stage.setTitle("Chat Client Login");
         stage.setScene(new Scene(root));
-        stage.setMinHeight(330);
-        stage.setMinWidth(420);
-        stage.setMaxHeight(330);
-        stage.setMaxWidth(420);
+        stage.setMinHeight(390);
+        stage.setMinWidth(460);
+        stage.setMaxHeight(390);
+        stage.setMaxWidth(460);
     }
 
     public void setClientStage(ConnectionController connection) throws IOException {

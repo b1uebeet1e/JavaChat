@@ -15,7 +15,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -28,8 +27,6 @@ public class ClientController implements Initializable {
     private ConnectionController connection;
 
     private String my_nickname;
-
-    private Font font;
 
     @FXML
     Button send, nickname, disconnect;
@@ -61,7 +58,7 @@ public class ClientController implements Initializable {
             dialog.setContentText("Enter your new nickname:");
             Optional<String> result = dialog.showAndWait();
             try {
-                if (result.isPresent()){
+                if (result.isPresent()) {
                     connection.sendMessage("#change_my_nickname_to# " + result.get());
                 }
             } catch (IOException e) {
@@ -119,7 +116,6 @@ public class ClientController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         my_nickname = "";
-        font = new Font("Roboto", 14);
         messageListener();
     }
 
@@ -133,8 +129,8 @@ public class ClientController implements Initializable {
                     try {
                         msg = connection.getInput().readLine();
                     } catch (Exception e) {
-                        System.err.println(e);  
-						break;
+                        System.err.println(e);
+                        break;
                     }
                     if (msg.isEmpty()) {
                         continue;
@@ -179,14 +175,12 @@ public class ClientController implements Initializable {
 
     private Text textMessage(String str) {
         Text text = new Text(str);
-        text.setFont(font);
         text.setWrappingWidth(messages.getWidth() - 25);
         return text;
     }
 
     private Text errorMessage(String str) {
         Text text = new Text(str);
-        text.setFont(font);
         text.setFill(Color.RED);
         text.setWrappingWidth(messages.getWidth() - 25);
         return text;
@@ -194,13 +188,11 @@ public class ClientController implements Initializable {
 
     private Text userText(String str) {
         Text text = new Text(str);
-        text.setFont(font);
         return text;
     }
 
     private Text myUserText(String str) {
         Text text = new Text(str);
-        text.setFont(font);
         text.setFill(Color.DARKCYAN);
         return text;
     }
@@ -218,7 +210,7 @@ public class ClientController implements Initializable {
                         continue;
                     }
                     userBox.getChildren().add(userText(str));
-					users.setVvalue(1.0); 
+                    users.setVvalue(1.0);
                 }
             }
         });
@@ -230,7 +222,7 @@ public class ClientController implements Initializable {
             @Override
             public void run() {
                 messageBox.getChildren().add(errorMessage(str.trim()));
-				messages.setVvalue(1.0); 
+                messages.setVvalue(1.0);
             }
         });
     }
@@ -241,7 +233,7 @@ public class ClientController implements Initializable {
             @Override
             public void run() {
                 messageBox.getChildren().add(textMessage(str.trim()));
-				messages.setVvalue(1.0);
+                messages.setVvalue(1.0);
             }
         });
     }
