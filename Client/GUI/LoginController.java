@@ -63,6 +63,9 @@ public class LoginController implements Initializable {
         } catch (IOException e) {
             error.setText("I/O Error: " + e.getMessage());
             System.err.println(e.toString());
+        } catch (InterruptedException e) {
+            error.setText("Error: " + e.getMessage());
+            System.err.println(e.toString());
         }
     }
 
