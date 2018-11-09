@@ -30,7 +30,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <TextField fx:id="username" disable="true" layoutX="19.0" layoutY="110.0" prefHeight="30.0" prefWidth="200.0" promptText="username" AnchorPane.leftAnchor="19.0" AnchorPane.topAnchor="90.0">
+      <TextField fx:id="username" disable="true" layoutX="19.0" layoutY="110.0" prefHeight="30.0" prefWidth="200.0" promptText="username" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="90.0">
          <font>
             <Font size="14.0" />
          </font>
@@ -40,17 +40,17 @@
             <Font size="14.0" />
          </font>
       </PasswordField>
-      <TextField fx:id="address" layoutX="18.0" layoutY="184.0" prefHeight="30.0" prefWidth="200.0" promptText="address" text="localhost" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="164.0">
+      <TextField fx:id="address" layoutX="18.0" layoutY="184.0" prefHeight="30.0" prefWidth="200.0" promptText="host address" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="164.0">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <TextField fx:id="port" layoutX="217.0" layoutY="184.0" prefHeight="30.0" prefWidth="200.0" promptText="port" text="51234" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="164.0">
+      <TextField fx:id="port" editable="false" layoutX="244.0" layoutY="165.0" prefHeight="30.0" prefWidth="100.0" promptText="port" text="51234" AnchorPane.rightAnchor="116.0" AnchorPane.topAnchor="165.0">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <Label layoutX="329.0" layoutY="140.0" text="Port" AnchorPane.rightAnchor="104.0" AnchorPane.topAnchor="140.0">
+      <Label layoutX="326.0" layoutY="140.0" text="Port" AnchorPane.rightAnchor="105.0" AnchorPane.topAnchor="140.0">
          <font>
             <Font size="14.0" />
          </font>
@@ -60,12 +60,12 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Label layoutX="93.0" layoutY="140.0" text="Address" AnchorPane.leftAnchor="93.0" AnchorPane.topAnchor="140.0">
+      <Label layoutX="90.0" layoutY="140.0" text="Address" AnchorPane.leftAnchor="90.0" AnchorPane.topAnchor="140.0">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <Label layoutX="86.0" layoutY="63.0" text="Username" AnchorPane.leftAnchor="86.0" AnchorPane.topAnchor="63.0">
+      <Label layoutX="82.0" layoutY="63.0" text="Username" AnchorPane.leftAnchor="82.0" AnchorPane.topAnchor="63.0">
          <font>
             <Font size="14.0" />
          </font>
@@ -78,7 +78,7 @@
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </Label>
-      <CheckBox fx:id="anon" layoutX="339.0" layoutY="239.0" mnemonicParsing="false" text="Tor Proxy" AnchorPane.bottomAnchor="101.0" AnchorPane.rightAnchor="36.0">
+      <CheckBox fx:id="anon" layoutX="328.0" layoutY="234.0" mnemonicParsing="false" prefHeight="30.0" text="Tor Proxy" AnchorPane.bottomAnchor="96.0" AnchorPane.rightAnchor="40.0">
          <font>
             <Font size="14.0" />
          </font>
@@ -93,7 +93,7 @@
             </Tooltip>
          </tooltip>
       </CheckBox>
-      <ComboBox fx:id="choice" layoutX="69.0" layoutY="237.0" prefHeight="30.0" prefWidth="275.0" AnchorPane.bottomAnchor="96.0" AnchorPane.leftAnchor="19.0">
+      <ComboBox fx:id="choice" layoutX="69.0" layoutY="237.0" onAction="#onChoice" prefHeight="30.0" prefWidth="275.0" AnchorPane.bottomAnchor="96.0" AnchorPane.leftAnchor="19.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -105,5 +105,16 @@
             </Tooltip>
          </tooltip>
       </ComboBox>
+      <CheckBox fx:id="c_port" layoutX="357.0" layoutY="165.0" mnemonicParsing="false" onAction="#setPort" prefHeight="30.0" text="Custom" AnchorPane.rightAnchor="18.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <tooltip>
+            <Tooltip text="use custom port" />
+         </tooltip>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </CheckBox>
    </children>
 </AnchorPane>

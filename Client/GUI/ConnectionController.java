@@ -7,6 +7,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
 /**
  * ConnectionController
  */
@@ -25,10 +28,24 @@ public class ConnectionController {
             server.connect(new InetSocketAddress(host, port));
         }
 
+        else if (arg == 1) {
+            System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
+            SSLSocket ssl_socket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(host,
+                    port);
+            server = ssl_socket;
+        }
+
         else if (arg == 2) {
             OnionProxyManager.start();
             Thread.sleep(5000); // Give it some time to create a circuit
             server = OnionProxyManager.openSocket(host, port);
+        }
+
+        else if (arg == 3) {
+            OnionProxyManager.start();
+            Thread.sleep(5000); // Give it some time to create a circuit
+            System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
+            server = OnionProxyManager.openSSLSocket(host, port);
         }
 
         else {

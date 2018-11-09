@@ -37,7 +37,34 @@ public class LoginController implements Initializable {
     private ComboBox<String> choice;
 
     @FXML
-    private CheckBox anon;
+    private CheckBox anon, c_port;
+
+    @FXML
+    private void setPort() {
+        if (c_port.selectedProperty().get()) {
+            port.editableProperty().setValue(true);
+        }
+
+        else {
+            port.editableProperty().setValue(false);
+            onChoice();
+        }
+    }
+
+    @FXML
+    private void onChoice() {
+        if (c_port.selectedProperty().get()) {
+            return;
+        }
+
+        if (choice.getSelectionModel().getSelectedIndex() == 0) {
+            port.setText("51234");
+        }
+
+        else if (choice.getSelectionModel().getSelectedIndex() == 1) {
+            port.setText("51235");
+        }
+    }
 
     @FXML
     private void login() {
