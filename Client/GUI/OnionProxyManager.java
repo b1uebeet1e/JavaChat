@@ -26,12 +26,17 @@ public class OnionProxyManager {
 	 * @throws IOException Thrown if the Tor process cannot be spawned.
 	 **/
 	public static void start() throws IOException {
-		if (System.getProperty("os.name").contains("windows")) {
+		if (System.getProperty("os.name").indexOf("win") >= 0) {
 			tor_process = Runtime.getRuntime().exec("./win/tor.exe");
 		}
 
-		else if (System.getProperty("os.name").contains("linux")) {
+		else if (System.getProperty("os.name").indexOf("nux") >= 0
+				|| System.getProperty("os.name").indexOf("nix") >= 0) {
 			tor_process = Runtime.getRuntime().exec("./lin64/tor");
+		}
+
+		else if (System.getProperty("os.name").indexOf("mac") >= 0) {
+			tor_process = Runtime.getRuntime().exec("./osx/tor.real");
 		}
 
 		proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxy_host, proxy_port));
