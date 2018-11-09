@@ -39,6 +39,10 @@ public class OnionProxyManager {
 			tor_process = Runtime.getRuntime().exec("./osx/tor.real");
 		}
 
+		else {
+			throw new IOException("invalid os");
+		}
+
 		proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxy_host, proxy_port));
 	}
 
