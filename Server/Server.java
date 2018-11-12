@@ -176,7 +176,8 @@ public class Server {
             // Get the port # from the command line
             if (args.length == 1) {
                 port = Integer.parseInt(args[0]);
-                ssl_port = Integer.parseInt(args[0]) + 1;
+                ssl_port = Integer.parseInt(args[0]);
+                ssl_port++;
             }
 
             else if (args.length == 2) {
@@ -204,28 +205,7 @@ public class Server {
 
         // Create a Server object, which will automatically begin
         // accepting connections.
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    new Server(port).run();
-                } catch (IOException e) {
-                    System.out.println(e);
-                }
-            }
-        });
-
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    new Server(ssl_port).runSSL();
-                } catch (IOException e) {
-                    System.out.println(e);
-                }
-            }
-        });
+        // new Server(port).run();
+        new Server(ssl_port).runSSL();
     }
 }
