@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 /**
  * Server
  */
@@ -28,7 +31,20 @@ public class Server {
     private void run() throws IOException {
         // Create the ServerSocket
         server = new ServerSocket(port);
+        listen();
+    }
 
+    private void runSSL() throws IOException {
+        System.setProperty("javax.net.ssl.keyStore", "ServerKeyStore.jks");
+
+        // Create the ServerSocket
+        SSLServerSocket ssl_server = (SSLServerSocket) ((SSLServerSocketFactory) SSLServerSocketFactory.getDefault())
+                .createServerSocket(port);
+        server = ssl_server;
+        listen();
+    }
+
+    private void listen() throws IOException {
         // Tell the world we're ready to go
         System.out.println("Listening on " + server);
 
@@ -155,27 +171,41 @@ public class Server {
     // Main routine
     // Usage: java Server <port>
     public static void main(String[] args) throws Exception {
-        int port;
+        int port, ssl_port;
         try {
             // Get the port # from the command line
-            if (args.length != 1) {
+            if (args.length == 1) {
+                port = Integer.parseInt(args[0]);
+                ssl_port = Integer.parseInt(args[0]);
+                ssl_port++;
+            }
+
+            else if (args.length == 2) {
+                port = Integer.parseInt(args[0]);
+                ssl_port = Integer.parseInt(args[1]);
+            }
+
+            else {
                 System.out.println("Improper declaration!");
                 System.out.println("Proper usage: java Server <port>");
+                System.out.println("Alternative proper usage: java Server <port> <ssl port>");
                 return;
             }
-            port = Integer.parseInt(args[0]);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Improper declaration!");
             System.out.println("Proper usage: java Server <port>");
+            System.out.println("Alternative proper usage: java Server <port> <ssl port>");
             return;
         } catch (NumberFormatException e) {
             System.out.println("Improper declaration!");
             System.out.println("Proper usage: java Server <port>");
+            System.out.println("Alternative proper usage: java Server <port> <ssl port>");
             return;
         }
 
         // Create a Server object, which will automatically begin
         // accepting connections.
         new Server(port).run();
+        new Server(ssl_port).runSSL();
     }
 }
