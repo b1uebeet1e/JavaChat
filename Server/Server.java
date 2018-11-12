@@ -211,7 +211,7 @@ public class Server {
                 try {
                     new Server(port).run();
                 } catch (IOException e) {
-                    System.err.print(e);
+                    System.out.println(e);
                 }
             }
         });
@@ -223,7 +223,7 @@ public class Server {
                 try {
                     new Server(ssl_port).runSSL();
                 } catch (IOException e) {
-                    System.err.print(e);
+                    System.out.println(e);
                 }
             }
         });
