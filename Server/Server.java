@@ -36,6 +36,7 @@ public class Server {
 
     private void runSSL() throws IOException {
         System.setProperty("javax.net.ssl.keyStore", "ServerKeyStore.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "password");
 
         // Create the ServerSocket
         SSLServerSocket ssl_server = (SSLServerSocket) ((SSLServerSocketFactory) SSLServerSocketFactory.getDefault())
@@ -176,8 +177,7 @@ public class Server {
             // Get the port # from the command line
             if (args.length == 1) {
                 port = Integer.parseInt(args[0]);
-                ssl_port = Integer.parseInt(args[0]);
-                ssl_port++;
+                ssl_port = Integer.parseInt(args[0]) + 1;
             }
 
             else if (args.length == 2) {
@@ -205,7 +205,29 @@ public class Server {
 
         // Create a Server object, which will automatically begin
         // accepting connections.
-        // new Server(port).run();
-        new Server(ssl_port).runSSL();
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    new Server(port).run();
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    new Server(ssl_port).runSSL();
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        }).start();
     }
 }
