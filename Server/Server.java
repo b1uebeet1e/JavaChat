@@ -209,7 +209,11 @@ public class Server {
 
             @Override
             public void run() {
-                new Server(port).run();
+                try {
+                    new Server(port).run();
+                } catch (IOException e) {
+                    System.err.print(e);
+                }
             }
         });
 
@@ -217,7 +221,11 @@ public class Server {
 
             @Override
             public void run() {
-                new Server(ssl_port).runSSL();
+                try {
+                    new Server(ssl_port).runSSL();
+                } catch (IOException e) {
+                    System.err.print(e);
+                }
             }
         });
     }
