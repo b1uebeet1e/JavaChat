@@ -205,7 +205,20 @@ public class Server {
 
         // Create a Server object, which will automatically begin
         // accepting connections.
-        new Server(port).run();
-        new Server(ssl_port).runSSL();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                new Server(port).run();
+            }
+        });
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                new Server(ssl_port).runSSL();
+            }
+        });
     }
 }
