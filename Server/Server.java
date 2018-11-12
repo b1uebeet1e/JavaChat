@@ -176,8 +176,7 @@ public class Server {
             // Get the port # from the command line
             if (args.length == 1) {
                 port = Integer.parseInt(args[0]);
-                ssl_port = Integer.parseInt(args[0]);
-                ssl_port++;
+                ssl_port = Integer.parseInt(args[0]) + 1;
             }
 
             else if (args.length == 2) {
