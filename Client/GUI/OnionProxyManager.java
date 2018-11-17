@@ -12,42 +12,48 @@ import javax.net.ssl.SSLSocketFactory;
 public class OnionProxyManager {
 
 	// Tor Process
-	private static Process tor_process;
+	private Process tor_process;
 
 	// Proxy
-	private static Proxy proxy;
-	private static final String proxy_host = "127.0.0.1";
-	private static final int proxy_port = 9050;
+	private Proxy proxy;
+	private String proxy_host;
+	private int proxy_port;
+
+	// Constructor
+	public OnionProxyManager() {
+		proxy_host = "127.0.0.1";
+		proxy_port = 9050;
+	}
 
 	// Spawns the Tor proxy process.
-	public static void start() throws IOException {
-		if (System.getProperty("os.name").indexOf("win") >= 0) {
-			tor_process = Runtime.getRuntime().exec("./win/tor.exe");
+	public void start() throws IOException {
+		if (System.getProperty("os.name").indexOf("Win") >= 0) {
+			tor_process = Runtime.getRuntime().exec("win/tor.exe");
 		}
 
 		else if (System.getProperty("os.name").indexOf("nux") >= 0
 				|| System.getProperty("os.name").indexOf("nix") >= 0) {
-			tor_process = Runtime.getRuntime().exec("./lin64/tor");
+			tor_process = Runtime.getRuntime().exec("lin64/tor");
 		}
 
 		else if (System.getProperty("os.name").indexOf("mac") >= 0) {
-			tor_process = Runtime.getRuntime().exec("./osx/tor.real");
+			tor_process = Runtime.getRuntime().exec("osx/tor.real");
 		}
 
 		else {
-			throw new IOException("invalid os");
+			throw new IOException("invalid os: " + System.getProperty("os.name"));
 		}
 
 		proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxy_host, proxy_port));
 	}
 
 	// Returns the proxy object.
-	public static Proxy getProxy() {
+	public Proxy getProxy() {
 		return proxy;
 	}
 
 	// Opens a plain-text socket connection over the Tor network
-	public static Socket openSocket(String address, int port) throws IOException {
+	public Socket openSocket(String address, int port) throws IOException {
 		Socket socket = new Socket(proxy);
 		InetSocketAddress addr = InetSocketAddress.createUnresolved(address, port);
 		socket.connect(addr);
@@ -55,7 +61,7 @@ public class OnionProxyManager {
 	}
 
 	// Opens a secure SSL socket connection over the Tor network.
-	public static SSLSocket openSSLSocket(String address, int port) throws IOException {
+	public SSLSocket openSSLSocket(String address, int port) throws IOException {
 		Socket socket = openSocket(address, port);
 
 		SSLSocket ssl_socket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(socket,
@@ -65,12 +71,15 @@ public class OnionProxyManager {
 	}
 
 	// Is the Tor proxy process alive?
-	public static boolean isProcessAlive() {
+	public boolean isProcessAlive() {
+		if (tor_process == null) {
+			return false;
+		}
 		return tor_process.isAlive();
 	}
 
 	// Stops the Tor proxy process.
-	public static void stop() {
+	public void stop() {
 		tor_process.destroy();
 	}
 }

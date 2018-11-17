@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -18,10 +19,12 @@ public class ConnectionController {
     private Socket server;
     private PrintStream output;
     private BufferedReader input;
-    private static OnionProxyManager tor;
+    private OnionProxyManager tor;
 
     public ConnectionController(String host, int port, int arg)
-            throws IOException, SocketTimeoutException, UnknownHostException, InterruptedException {
+            throws IOException, SocketTimeoutException, UnknownHostException, InterruptedException, SSLException {
+
+        tor = new OnionProxyManager();
 
         if (arg == 0) {
             server = new Socket();
@@ -36,16 +39,16 @@ public class ConnectionController {
         }
 
         else if (arg == 2) {
-            OnionProxyManager.start();
+            tor.start();
             Thread.sleep(5000); // Give it some time to create a circuit
-            server = OnionProxyManager.openSocket(host, port);
+            server = tor.openSocket(host, port);
         }
 
         else if (arg == 3) {
-            OnionProxyManager.start();
+            tor.start();
             Thread.sleep(5000); // Give it some time to create a circuit
             System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
-            server = OnionProxyManager.openSSLSocket(host, port);
+            server = tor.openSSLSocket(host, port);
         }
 
         else {
@@ -75,6 +78,8 @@ public class ConnectionController {
         output.close();
         input.close();
         server.close();
-        tor.stop();
+        if (tor.isProcessAlive()) {
+            tor.stop();
+        }
     }
 }

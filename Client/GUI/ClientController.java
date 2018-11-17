@@ -129,6 +129,7 @@ public class ClientController implements Initializable {
                     try {
                         msg = connection.getInput().readLine();
                     } catch (Exception e) {
+                        showNotification(e.toString());
                         System.err.println(e);
                         break;
                     }
