@@ -101,7 +101,7 @@ public class Server {
 
             // Check if IP is in the blacklist
             if (blacklist.containsKey(client.getInetAddress().toString())) {
-                if ((blacklist.get(client.getInetAddress().toString()) - System.currentTimeMillis()) <= 0) {
+                if ((blacklist.get(client.getInetAddress().toString()) - System.currentTimeMillis()) > 0) {
                     System.out.println("IP '" + client.getInetAddress() + "' is banned");
                     new PrintStream(client.getOutputStream()).println("#private# #banned#");
                 } else {
