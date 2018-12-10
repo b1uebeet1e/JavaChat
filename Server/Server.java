@@ -3,9 +3,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -26,7 +24,7 @@ public class Server {
 
     // Hashmap that contains banned IPs as keys and the time they were banned as
     // values
-    private HashMap<InetAddress, Long> blacklist;
+    private HashMap<String, Long> blacklist;
 
     // HashMap that contains users with their nicknames as keys;
     private HashMap<String, User> clients, ssl_clients, ssl_unsecure_clients;
@@ -102,12 +100,12 @@ public class Server {
             Socket client = server.accept();
 
             // Check if IP is in the blacklist
-            if (blacklist.containsKey(client.getInetAddress())) {
-                if ((blacklist.get(client.getInetAddress()) - System.currentTimeMillis()) <= 0) {
+            if (blacklist.containsKey(client.getInetAddress().toString())) {
+                if ((blacklist.get(client.getInetAddress().toString()) - System.currentTimeMillis()) <= 0) {
                     System.out.println("IP '" + client.getInetAddress() + "' is banned");
                     new PrintStream(client.getOutputStream()).println("#private# #banned#");
                 } else {
-                    blacklist.remove(client.getInetAddress());
+                    blacklist.remove(client.getInetAddress().toString());
                 }
             }
 
@@ -144,7 +142,7 @@ public class Server {
 
     // Ban a specific user for a period of time
     public void banUser(User client) {
-        blacklist.put(client.getSocket().getInetAddress(), System.currentTimeMillis() + ban_timer);
+        blacklist.put(client.getSocket().getInetAddress().toString(), System.currentTimeMillis() + ban_timer);
         System.out.println("User '" + client.getNickname() + "' got banned");
         broadcastToAll("#notify# user '" + client.getNickname() + "' banned for use of improper language",
                 client.isSSL());
