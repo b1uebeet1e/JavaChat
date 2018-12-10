@@ -15,8 +15,13 @@ public class Server {
 
     private ServerSocket server;
 
-    public Server(int port) {
+    private boolean busy;
+
+    private int size_limit;
+
+    public Server(int port, int size_limit) {
         this.port = port;
+        this.size_limit = size_limit;
     }
 
     public void run() throws IOException {
@@ -24,11 +29,18 @@ public class Server {
 
         System.out.println("Listening on " + server);
 
-        Socket client = server.accept();
+        while (true) {
+            Socket client = server.accept();
 
-        System.out.println("Connection from " + client);
+            System.out.println("Connection from " + client);
 
-        save(client);
+            if (!busy) {
+                busy = true;
+                save(client);
+            } else {
+                client.close();
+            }
+        }
     }
 
     private void save(Socket client) throws IOException {
@@ -36,44 +48,43 @@ public class Server {
         DataOutputStream output = new DataOutputStream(client.getOutputStream());
 
         String name = input.readUTF();
-        File file = new File(name);
-        while (file.exists() || file.isDirectory()) {
-            name = "(1)" + name;
-            file = new File(name);
-        }
-
-        FileOutputStream file_output = new FileOutputStream(file);
-        byte[] buffer = new byte[5000];
-
         int filesize = input.readInt();
-        int read = 0;
-        int totalRead = 0;
-        int remaining = filesize;
-        while ((read = input.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-            totalRead += read;
-            remaining -= read;
-            System.out.println("read " + totalRead + " bytes.");
-            file_output.write(buffer, 0, read);
-            double persentage = totalRead / (double) filesize;
-            if ((int)persentage % 2 == 0) {
-                output.writeDouble(persentage);
+
+        if (filesize <= size_limit) {
+
+            output.writeBoolean(true);
+            File file = new File(name);
+
+            while (file.exists() || file.isDirectory()) {
+                name = "(1)" + name;
+                file = new File(name);
             }
+
+            FileOutputStream file_output = new FileOutputStream(file);
+            byte[] buffer = new byte[5000];
+
+            int read = 0;
+            int totalRead = 0;
+            int remaining = filesize;
+            while ((read = input.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
+                totalRead += read;
+                remaining -= read;
+                System.out.println("read " + totalRead + " bytes.");
+                file_output.write(buffer, 0, read);
+            }
+            output.writeBoolean(true);
+            file_output.close();
+
         }
-        output.writeDouble(2);
 
-        try {
-            Thread.sleep(5000);
-
-        } catch (Exception e) {
-            // TODO
-
+        else {
+            output.writeBoolean(false);
         }
-                    
         input.close();
-        file_output.close();
+        busy = false;
     }
 
     public static void main(String[] args) throws Exception {
-        new Server(Integer.parseInt(args[0])).run();
+        new Server(Integer.parseInt(args[0]), Integer.parseInt(args[1])).run();
     }
 }

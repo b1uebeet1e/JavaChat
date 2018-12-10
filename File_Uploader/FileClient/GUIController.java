@@ -7,7 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -28,9 +27,6 @@ public class GUIController implements Initializable {
 
     @FXML
     Label message;
-
-    @FXML
-    ProgressIndicator progress;
 
     @FXML
     TextField host, port, path;
@@ -65,9 +61,6 @@ public class GUIController implements Initializable {
 
     @FXML
     private void upload() {
-        logo.setVisible(false);
-        progress.setVisible(true);
-        progress.setProgress(0);
         message.setText("Connecting...");
 
         try {
@@ -78,6 +71,9 @@ public class GUIController implements Initializable {
 
             connection = new ConnectionController(host.getText(), port_num);
             connection.run();
+            if (!connection.isAlive()) {
+                throw new Exception("Server might be busy :(");
+            }
 
             message.setText("Uploading file...");
 
@@ -85,13 +81,9 @@ public class GUIController implements Initializable {
 
             DataInputStream input = connection.getInput();
 
-            double persentage = 0;
-            while (persentage <= 1) {
-                progress.setProgress(persentage);
-                persentage = input.readDouble();
+            if (input.readBoolean()) {
+                message.setText("File successfully uploaded!");
             }
-
-            message.setText("File successfully uploaded!");
         } catch (Exception e) {
             message.setText(e.getMessage());
         }

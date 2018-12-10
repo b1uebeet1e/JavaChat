@@ -14,7 +14,7 @@ public class ConnectionController {
     private String host;
     private int port;
     private Socket server;
-    // private OnionProxyManager tor;
+    private OnionProxyManager tor;
     private DataInputStream input;
     private DataOutputStream output;
 
@@ -24,13 +24,13 @@ public class ConnectionController {
     }
 
     public void run() throws IOException {
-        // tor = new OnionProxyManager();
-        // tor.start();
-        // Thread.sleep(5000); // Give it some time to create a circuit
-        // server = tor.openSocket(host, port);
+        tor = new OnionProxyManager();
+        tor.start();
+        Thread.sleep(5000); // Give it some time to create a circuit
+        server = tor.openSocket(host, port);
 
-        server = new Socket();
-        server.connect(new InetSocketAddress(host, port));
+        // server = new Socket();
+        // server.connect(new InetSocketAddress(host, port));
         input = new DataInputStream(server.getInputStream());
         output = new DataOutputStream(server.getOutputStream());
     }
@@ -40,6 +40,10 @@ public class ConnectionController {
 
         output.writeUTF(file.getName());
         output.writeInt((int) file.length());
+
+        if (!input.readBoolean()) {
+            throw new IOException("File choosen is too big!!");
+        }
 
         FileInputStream file_input = new FileInputStream(file);
         byte[] buffer = new byte[5000];
@@ -59,8 +63,12 @@ public class ConnectionController {
         input.close();
         output.close();
         server.close();
-        // if (tor.isProcessAlive()) {
-        // tor.stop();
-        // }
+        if (tor.isProcessAlive()) {
+            tor.stop();
+        }
+    }
+
+    public boolean isAlive() {
+        return !server.isClosed();
     }
 }
