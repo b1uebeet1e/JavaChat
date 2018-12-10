@@ -32,6 +32,8 @@ public class ConnectionController {
         }
 
         else if (arg == 1) {
+            System.setProperty("javax.net.ssl.keyStore", "ClientKeyStore.jks");
+            System.setProperty("javax.net.ssl.keyStorePassword", "password");
             System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
             System.setProperty("javax.net.ssl.trustStorePassword", "password");
 
@@ -50,7 +52,10 @@ public class ConnectionController {
         else if (arg == 3) {
             tor.start();
             Thread.sleep(5000); // Give it some time to create a circuit
+            System.setProperty("javax.net.ssl.keyStore", "ClientKeyStore.jks");
+            System.setProperty("javax.net.ssl.keyStorePassword", "password");
             System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
+            System.setProperty("javax.net.ssl.trustStorePassword", "password");
             server = tor.openSSLSocket(host, port);
         }
 

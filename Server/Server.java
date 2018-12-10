@@ -69,13 +69,15 @@ public class Server {
     private void runSSL() throws IOException {
         System.setProperty("javax.net.ssl.keyStore", "ServerKeyStore.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
+        System.setProperty("javax.net.ssl.trustStore", "ServerKeyStore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "password");
 
         // Create the ServerSocket
         ssl_server = (SSLServerSocket) ((SSLServerSocketFactory) SSLServerSocketFactory.getDefault())
                 .createServerSocket(ssl_port);
 
         // Check certificate
-        // ssl_server.setNeedClientAuth(true);
+        ssl_server.setNeedClientAuth(true);
 
         new Thread(new Runnable() {
 

@@ -1,9 +1,6 @@
 keytool -genkey -alias Server -keystore ServerKeyStore.jks -keyalg RSA -sigalg SHA1withRSA
 // password = 'password'
 
-keytool -importkeystore -srckeystore ServerKeyStore.jks -destkeystore ServerKeyStore.jks -deststoretype pkcs12
-// change to non propriatary format
-
 keytool -list -v -keystore ServerKeyStore.jks
 // verify that the key pairs are added to the key store
 
@@ -50,9 +47,6 @@ keytool -list -v -keystore ServerKeyStore.jks
 
 keytool -genkey -alias Client -keystore ClientKeyStore.jks -keyalg RSA -sigalg SHA1withRSA
 // password = 'password'
-
-keytool -importkeystore -srckeystore ClientKeyStore.jks -destkeystore ClientKeyStore.jks -deststoretype pkcs12
-// change to non propriatary format
 
 keytool -list -v -keystore ClientKeyStore.jks
 // verify that the key pairs are added to the key store
