@@ -194,12 +194,22 @@ public class Server {
                 message += " ";
                 message += nickname;
             }
+
+            for (String nickname : this.ssl_unsecure_clients.keySet()) {
+                message += " ";
+                message += nickname;
+            }
             client.getOutStream().println(message);
         }
 
         for (User client : this.ssl_unsecure_clients.values()) {
             String message = "#online_users#";
             for (String nickname : this.clients.keySet()) {
+                message += " ";
+                message += nickname;
+            }
+
+            for (String nickname : this.ssl_unsecure_clients.keySet()) {
                 message += " ";
                 message += nickname;
             }
@@ -383,6 +393,35 @@ public class Server {
         } else {
             return updateUnsecureUserNickname(old_nickname, new_nickname);
         }
+    }
+
+    // Swap from Secure to Unsecure channel and reverse
+    public boolean swapChannel(User client) {
+        boolean success = false;
+
+        if (ssl_unsecure_clients.containsKey(client.getNickname())) {
+            synchronized (ssl_unsecure_clients) {
+                ssl_unsecure_clients.remove(client.getNickname());
+            }
+
+            synchronized (ssl_clients) {
+                ssl_clients.put(client.getNickname(), client);
+            }
+
+            success = true;
+        } else if (ssl_clients.containsKey(client.getNickname())) {
+            synchronized (ssl_clients) {
+                ssl_clients.remove(client.getNickname());
+            }
+
+            synchronized (ssl_unsecure_clients) {
+                ssl_unsecure_clients.put(client.getNickname(), client);
+            }
+
+            success = true;
+        }
+
+        return success;
     }
 
     // Main routine

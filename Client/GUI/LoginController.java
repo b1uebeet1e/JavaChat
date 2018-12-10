@@ -79,7 +79,11 @@ public class LoginController implements Initializable {
                 arg += 2;
             }
             connection = new ConnectionController(address.getText(), port_num, arg);
-            controller.setClientStage(connection);
+            if (arg == 0 || arg == 2) {
+                controller.setClientStage(connection);
+            } else {
+                controller.setClientStage(connection, true);
+            }
         } catch (NumberFormatException | NullPointerException e) {
             error.setText("Invalid port number!!");
             System.err.println(e.toString());

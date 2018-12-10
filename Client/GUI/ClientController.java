@@ -29,7 +29,7 @@ public class ClientController implements Initializable {
     private String my_nickname;
 
     @FXML
-    Button send, nickname, disconnect;
+    Button send, nickname, disconnect, swap;
 
     @FXML
     ScrollPane messages, users;
@@ -71,6 +71,15 @@ public class ClientController implements Initializable {
                 connection.sendMessage("#terminate_connection#");
                 connection.close();
                 controller.setLoginStage();
+            } catch (IOException e) {
+                messageBox.getChildren().add(errorMessage("ERROR"));
+            }
+        }
+
+        else if (event.getSource() == swap) {
+            try {
+                messageBox.getChildren().clear();
+                connection.sendMessage("#swap_connection#");
             } catch (IOException e) {
                 messageBox.getChildren().add(errorMessage("ERROR"));
             }
@@ -255,5 +264,9 @@ public class ClientController implements Initializable {
                 }
             }
         });
+    }
+
+    public void setSwappable(boolean ssl) {
+        swap.setDisable(!ssl);
     }
 }

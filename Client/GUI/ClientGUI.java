@@ -50,6 +50,11 @@ public class ClientGUI extends Application {
         login.setError(error);
     }
 
+    public void setClientStage(ConnectionController connection, boolean ssl) throws IOException {
+        setClientStage(connection);
+        client.setSwappable(ssl);
+    }
+
     public void setClientStage(ConnectionController connection) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("client.fxml"));
         Parent root = loader.load();

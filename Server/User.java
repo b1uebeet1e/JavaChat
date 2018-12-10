@@ -44,8 +44,12 @@ class User {
         return this.ssl;
     }
 
-    public void switchChannel(boolean ssl) {
-        this.ssl = ssl;
+    public void switchChannel() {
+        if (this.ssl) {
+            this.ssl = false;
+        } else {
+            this.ssl = true;
+        }
     }
 
     public void changeNickname(String nickname) {

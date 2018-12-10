@@ -72,6 +72,29 @@ public class UserHandler implements Runnable {
                 }
             }
 
+            else if (message.split(" ")[0].equals("#swap_connection#")) {
+                if (message.split(" ").length > 1) {
+                    System.out.println(this.user.getSocket() + " with nickname " + this.user.getNickname()
+                            + "sent unexpected request!!");
+                }
+
+                else {
+                    if (this.server.swapChannel(this.user)) {
+                        this.user.switchChannel();
+                        this.server.broadcastOnlineUsers(this.user.isSSL());
+                        if (this.user.isSSL()) {
+                            this.server.sendToUser("#notify# Swapped to Secure channel", this.user);
+                        } else {
+                            this.server.sendToUser("#notify# Swapped to Unsecure channel", this.user);
+                        }
+                    }
+
+                    else {
+                        this.server.sendToUser("#notify# An error occured while switching channels", this.user);
+                    }
+                }
+            }
+
             else {
 
                 // ... clean the message ...
