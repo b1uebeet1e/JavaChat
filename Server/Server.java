@@ -391,7 +391,7 @@ public class Server {
     // Usage: java Server <port>
     public static void main(String[] args) throws Exception {
         int port, ssl_port;
-        long ban_timer = 60000;
+        long ban_timer = 600000;
         try {
             // Get the port # from the command line
             if (args.length == 1) {
