@@ -27,7 +27,7 @@ public class OnionProxyManager {
 
 	// Spawns the Tor proxy process.
 	public void start() throws IOException {
-		if (System.getProperty("os.name").indexOf("Win") >= 0) {
+		if (System.getProperty("os.name").indexOf("win") >= 0) {
 			tor_process = Runtime.getRuntime().exec("win/tor.exe");
 		}
 

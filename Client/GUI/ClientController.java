@@ -148,6 +148,8 @@ public class ClientController implements Initializable {
                         if (msg.split(" ")[0].equals("#nickname#")) {
                             my_nickname = msg.replaceFirst("#nickname# ", "");
                             continue;
+                        } else if (msg.split(" ")[0].equals("#banned#")) {
+                            stopConnection();
                         }
                     }
 
@@ -235,6 +237,22 @@ public class ClientController implements Initializable {
             public void run() {
                 messageBox.getChildren().add(textMessage(str.trim()));
                 messages.setVvalue(1.0);
+            }
+        });
+    }
+
+    public void stopConnection() {
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    connection.sendMessage("#terminate_connection#");
+                    connection.close();
+                    controller.setLoginStage();
+                } catch (IOException e) {
+                    messageBox.getChildren().add(errorMessage("ERROR"));
+                }
             }
         });
     }

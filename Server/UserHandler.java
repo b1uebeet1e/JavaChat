@@ -12,6 +12,9 @@ public class UserHandler implements Runnable {
     // The user we are handing
     private User user;
 
+    // Trigger for improper language
+    private boolean trigger;
+
     // Constructor
     public UserHandler(Server server, User user) {
         // Save the parameters
@@ -19,7 +22,7 @@ public class UserHandler implements Runnable {
         this.user = user;
 
         // announce online users
-        this.server.broadcastOnlineUsers();
+        this.server.broadcastOnlineUsers(this.user.isSSL());
     }
 
     public void run() {
@@ -48,11 +51,12 @@ public class UserHandler implements Runnable {
                         this.server.sendToUser("#notify# name cannot contain offensive language!!", this.user);
                     }
 
-                    else if (this.server.updateUserNickname(old_nickname, new_nickname)) {
+                    else if (this.server.updateUserNickname(old_nickname, new_nickname, this.user.isSSL())) {
                         this.server.sendToUser("#nickname# " + new_nickname, this.user);
-                        this.server.broadcastOnlineUsers();
+                        this.server.broadcastOnlineUsers(this.user.isSSL());
                         this.server.broadcastToAll(
-                                "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'");
+                                "#notify# '" + old_nickname + "' changed its nickname to '" + new_nickname + "'",
+                                this.user.isSSL());
                     }
                 }
             }
@@ -73,28 +77,33 @@ public class UserHandler implements Runnable {
                 // ... clean the message ...
                 message = cleanMessage(message, this.user);
 
+                // ... tell the world ...
+                System.out.println("User '" + this.user.getNickname() + "' sent: " + message);
+
+                // ... and have the server send it to all clients ...
+                this.server.broadcastToAll(message, this.user.getNickname(), this.user.isSSL());
+
                 // ... check if user gets banned ...
                 if (this.user.getBanCounter() > 3) {
                     this.server.banUser(this.user);
                 }
 
-                // ... tell the world ...
-                System.out.println("User '" + this.user.getNickname() + "' sent: " + message);
-
-                // ... and have the server send it to all clients
-                this.server.broadcastToAll(message, this.user.getNickname());
+                // ... or give warning if needed
+                else if (trigger) {
+                    this.server.sendToUser("#notify# please be more polite or you 'll get banned...", this.user);
+                }
             }
         }
 
         // end of Thread
         this.server.removeConnection(user);
-        this.server.broadcastOnlineUsers();
+        this.server.broadcastOnlineUsers(this.user.isSSL());
         in.close();
     }
 
     // Clean contents of the message from offensive
     private String cleanMessage(String message, User user) {
-        boolean trigger = false;
+        trigger = false;
         try (BufferedReader in = new BufferedReader(new FileReader("banned_words.txt"))) {
             String str;
             while ((str = in.readLine()) != null) {

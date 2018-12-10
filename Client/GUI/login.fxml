@@ -17,7 +17,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginController">
    <children>
-      <Label alignment="CENTER" layoutX="104.0" layoutY="14.0" text="Enter Credentials" textAlignment="CENTER" AnchorPane.leftAnchor="104.0" AnchorPane.rightAnchor="103.0" AnchorPane.topAnchor="14.0">
+      <Label alignment="CENTER" layoutX="104.0" layoutY="14.0" text="Enter Credentials" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <font>
             <Font name="System Bold" size="25.0" />
          </font>

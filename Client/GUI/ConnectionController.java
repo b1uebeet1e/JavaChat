@@ -33,8 +33,11 @@ public class ConnectionController {
 
         else if (arg == 1) {
             System.setProperty("javax.net.ssl.trustStore", "ClientKeyStore.jks");
+            System.setProperty("javax.net.ssl.trustStorePassword", "password");
+
             SSLSocket ssl_socket = (SSLSocket) ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket(host,
                     port);
+
             server = ssl_socket;
         }
 

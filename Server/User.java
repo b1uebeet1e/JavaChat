@@ -9,10 +9,12 @@ class User {
     private PrintStream output;
     private InputStream input;
     private int ban_counter;
+    private boolean ssl;
 
-    public User(Socket client, String nickname) throws IOException {
+    public User(Socket client, String nickname, boolean ssl) throws IOException {
         this.client = client;
         this.nickname = nickname;
+        this.ssl = ssl;
         this.output = new PrintStream(client.getOutputStream());
         this.input = client.getInputStream();
         this.ban_counter = 0;
@@ -36,6 +38,14 @@ class User {
 
     public Socket getSocket() {
         return this.client;
+    }
+
+    public boolean isSSL() {
+        return this.ssl;
+    }
+
+    public void switchChannel(boolean ssl) {
+        this.ssl = ssl;
     }
 
     public void changeNickname(String nickname) {
