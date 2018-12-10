@@ -137,7 +137,7 @@ public class Server {
     // Ban a specific user for a period of time
     public void banUser(User client) {
         // TODO: change this to actual ban...
-        System.out.println("User '" + client.getNickname + "' got banned");
+        System.out.println("User '" + client.getNickname() + "' got banned");
         broadcastToAll("#notify# user '" + client.getNickname() + "' banned for use of improper language",
                 client.isSSL());
         sendToUser("#banned#", client);
