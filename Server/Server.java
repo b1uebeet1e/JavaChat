@@ -100,7 +100,7 @@ public class Server {
             // Grab the next incoming connection
             Socket client = server.accept();
 
-            System.out.println(client.getRemoteSocketAddress());
+            System.out.println(client.getLocalAddress());
             System.out.println(client.getInetAddress());
 
             // Tell the world we've got it
@@ -137,6 +137,7 @@ public class Server {
     // Ban a specific user for a period of time
     public void banUser(User client) {
         // TODO: change this to actual ban...
+        System.out.println("User '" + client.getNickname + "' got banned");
         broadcastToAll("#notify# user '" + client.getNickname() + "' banned for use of improper language",
                 client.isSSL());
         sendToUser("#banned#", client);
