@@ -45,6 +45,11 @@ public class ClientGUI extends Application {
         stage.setMaxWidth(460);
     }
 
+    public void setLoginStage(String error) throws IOException {
+        setLoginStage();
+        login.setError(error);
+    }
+
     public void setClientStage(ConnectionController connection) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("client.fxml"));
         Parent root = loader.load();

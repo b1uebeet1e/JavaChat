@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -100,8 +101,15 @@ public class Server {
             // Grab the next incoming connection
             Socket client = server.accept();
 
-            System.out.println(client.getLocalAddress());
-            System.out.println(client.getInetAddress());
+            // Check if IP is in the blacklist
+            if (blacklist.containsKey(client.getInetAddress())) {
+                if ((blacklist.get(client.getInetAddress()) - System.currentTimeMillis()) <= 0) {
+                    System.out.println("IP '" + client.getInetAddress() + "' is banned");
+                    new PrintStream(client.getOutputStream()).println("#private# #banned#");
+                } else {
+                    blacklist.remove(client.getInetAddress());
+                }
+            }
 
             // Tell the world we've got it
             System.out.println("Connection from " + client);
@@ -136,7 +144,7 @@ public class Server {
 
     // Ban a specific user for a period of time
     public void banUser(User client) {
-        // TODO: change this to actual ban...
+        blacklist.put(client.getSocket().getInetAddress(), System.currentTimeMillis() + ban_timer);
         System.out.println("User '" + client.getNickname() + "' got banned");
         broadcastToAll("#notify# user '" + client.getNickname() + "' banned for use of improper language",
                 client.isSSL());

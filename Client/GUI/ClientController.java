@@ -249,7 +249,7 @@ public class ClientController implements Initializable {
                 try {
                     connection.sendMessage("#terminate_connection#");
                     connection.close();
-                    controller.setLoginStage();
+                    controller.setLoginStage("Your IP is banned :(");
                 } catch (IOException e) {
                     messageBox.getChildren().add(errorMessage("ERROR"));
                 }
