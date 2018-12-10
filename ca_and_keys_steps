@@ -1,0 +1,79 @@
+keytool -genkey -alias Server -keystore ServerKeyStore.jks -keyalg RSA -sigalg SHA1withRSA
+// password = 'password'
+
+keytool -importkeystore -srckeystore ServerKeyStore.jks -destkeystore ServerKeyStore.jks -deststoretype pkcs12
+// change to non propriatary format
+
+keytool -list -v -keystore ServerKeyStore.jks
+// verify that the key pairs are added to the key store
+
+keytool -export -alias Server -file Server.cer -keystore ServerKeyStore.jks
+//  export the public key as a certificate
+
+keytool -printcert -v -file Server.cer
+// print the certificate
+
+keytool -certreq -alias Server -keystore ServerKeyStore.jks -file Server.csr
+// generate a Certificate Signing Request (CSR)
+
+set RANDFILE=rand
+// random file for openssl
+
+openssl req -new -keyout cakey.pem -out careq.pem -config /etc/ssl/openssl.cnf
+// password = 'password'
+// ask our Test CA's DN and a password to encrypt the private key while writing in cakey.pem file
+
+openssl x509 -signkey cakey.pem -req -days 3650 -in careq.pem -out caroot.cer -extensions v3_ca
+// self sign root certificate of my CA
+
+keytool -printcert -v -file caroot.cer
+// print root certificate of the CA
+
+echo 1234 > serial.txt
+// generate serial for openssl to use
+
+openssl x509 -CA caroot.cer -CAkey cakey.pem -CAserial serial.txt -req -in ../Keys/Server.csr -out ../Keys/ServerCA.cer -days 365
+// generate a certificate signed by the CA
+
+keytool -import -alias MyCA -file ../CA/caroot.cer -keystore ServerKeyStore.jks
+// Import my CA's root certificate to ServerKeyStore
+
+keytool -import -alias Server -file ServerCA.cer -keystore ServerKeyStore.jks
+// Import ServerCA.cer which is now signed by Test CA
+
+keytool -list -v -keystore ServerKeyStore.jks
+// verify that the certificates are added to the key store
+
+
+/**************************************************************************************************************/
+// ClientKeyStore
+
+keytool -genkey -alias Client -keystore ClientKeyStore.jks -keyalg RSA -sigalg SHA1withRSA
+// password = 'password'
+
+keytool -importkeystore -srckeystore ClientKeyStore.jks -destkeystore ClientKeyStore.jks -deststoretype pkcs12
+// change to non propriatary format
+
+keytool -list -v -keystore ClientKeyStore.jks
+// verify that the key pairs are added to the key store
+
+keytool -export -alias Client -file Client.cer -keystore ClientKeyStore.jks
+//  export the public key as a certificate
+
+keytool -printcert -v -file Client.cer
+// print the certificate
+
+keytool -certreq -alias Client -keystore ClientKeyStore.jks -file Client.csr
+// generate a Certificate Signing Request (CSR)
+
+openssl x509 -CA caroot.cer -CAkey cakey.pem -CAserial serial.txt -req -in ../Keys/Client.csr -out ../Keys/ClientCA.cer -days 365
+// generate a certificate signed by the CA
+
+keytool -import -alias MyCA -file ../CA/caroot.cer -keystore ClientKeyStore.jks
+// Import my CA's root certificate to ClientKeyStore
+
+keytool -import -alias Client -file ClientCA.cer -keystore ClientKeyStore.jks
+// Import ClientCA.cer which is now signed by Test CA
+
+keytool -list -v -keystore ClientKeyStore.jks
+// verify that the certificates are added to the key store

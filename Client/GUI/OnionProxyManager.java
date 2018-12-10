@@ -33,7 +33,6 @@ public class OnionProxyManager {
 
 		else if (System.getProperty("os.name").indexOf("nux") >= 0
 				|| System.getProperty("os.name").indexOf("nix") >= 0) {
-
 			Runtime.getRuntime().exec("chmod +x lin64/tor");
 			tor_process = Runtime.getRuntime().exec("lin64/tor");
 		}
